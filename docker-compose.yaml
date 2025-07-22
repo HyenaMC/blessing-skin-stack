@@ -1,0 +1,8 @@
+services:
+  skin:
+    build:
+      context: .
+    volumes:
+      - /skin:/app
+      - /etc/localtime:/etc/localtime:ro
+    restart: always
