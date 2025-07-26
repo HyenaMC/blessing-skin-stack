@@ -1,3 +1,25 @@
+# =================================================================
+# Construct Janus
+# =================================================================
+FROM node:22-slim as builder
+
+WORKDIR /opt/janus
+
+RUN git clone https://github.com/bs-community/janus.git .
+
+RUN npm install
+
+RUN cp .env.example .env
+RUN cp prisma/schema.prisma.example prisma/schema.prisma
+
+RUN npx prisma generate
+
+RUN npm run build
+
+# =================================================================
+# Main Container
+# =================================================================
+
 FROM php:8.1-apache
 
 # Install system dependencies
@@ -20,12 +42,13 @@ ADD https://github.com/mlocati/docker-php-extension-installer/releases/latest/do
 RUN chmod +x /usr/local/bin/install-php-extensions && \
   install-php-extensions gd zip pdo_mysql redis
   
-# Build Janus
-WORKDIR /opt
-RUN git clone https://github.com/bs-community/janus.git
+# Set up Janus
 WORKDIR /opt/janus
-RUN node --max-old-space-size=2048 /usr/bin/npm install
-RUN node --max-old-space-size=2048 /usr/bin/npm run build
+COPY --from=builder /opt/janus/dist ./dist
+COPY --from=builder /opt/janus/node_modules ./node_modules
+COPY --from=builder /opt/janus/package.json .
+COPY --from=builder /opt/janus/package-lock.json .
+COPY --from=builder /opt/janus/prisma ./prisma
 
 # Set up Apache
 WORKDIR /app
