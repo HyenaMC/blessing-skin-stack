@@ -22,10 +22,10 @@ RUN chmod +x /usr/local/bin/install-php-extensions && \
   
 # Build Janus
 WORKDIR /opt
-RUN git clone https://github.com/bs-community/janus.git && \
-    cd janus && \
-    npm install && \
-    npm run build
+RUN git clone https://github.com/bs-community/janus.git
+WORKDIR /opt/janus
+RUN node --max-old-space-size=2048 /usr/bin/npm install
+RUN node --max-old-space-size=2048 /usr/bin/npm run build
 
 # Set up Apache
 WORKDIR /app
