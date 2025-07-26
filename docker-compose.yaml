@@ -5,7 +5,7 @@ services:
     volumes:
       - /skin:/app
       - /etc/localtime:/etc/localtime:ro
-      - ./janus-proxy.conf:/etc/apache2/sites-available/001-janus-proxy.conf:ro
+      - ${STACK_PATH}/janus-proxy.conf:/etc/apache2/sites-available/001-janus-proxy.conf:ro
       - /skin/janus-config/.env:/opt/janus/.env:ro
       - /skin/janus-config/schema.prisma:/opt/janus/prisma/schema.prisma:ro
     ports:
