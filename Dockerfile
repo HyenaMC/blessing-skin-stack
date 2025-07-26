@@ -5,6 +5,8 @@ FROM node:22-slim as builder
 
 WORKDIR /opt/janus
 
+RUN apt-get update && apt-get install -y git && rm -rf /var/lib/apt/lists/*
+
 RUN git clone https://github.com/bs-community/janus.git .
 
 RUN npm install
